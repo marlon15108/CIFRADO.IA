@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA - Detector de Cifrados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; }
+        .card { background-color: #1e293b; border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .btn-primary { background-color: #38bdf8; border: none; font-weight: bold; }
+        .btn-primary:hover { background-color: #0ea5e9; }
+        .result-box { background-color: #334155; border-radius: 10px; padding: 15px; margin-top: 10px; border-left: 5px solid #38bdf8; }
+        .label-ai { color: #38bdf8; font-weight: bold; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="text-center mb-4">
+                <h1 class="fw-bold">Analizador de Cifrados con IA</h1>
+                <p class="text-secondary">Ingresa un mensaje para detectar el algoritmo y descifrar su contenido.</p>
+            </div>
+
+            <div class="card p-4">
+                <div class="mb-3">
+                    <label for="textoInput" class="form-label">Mensaje a procesar:</label>
+                    <textarea class="form-control bg-dark text-white border-secondary" id="textoInput" rows="4" placeholder="Pega aquí el código binario, base64 o texto..."></textarea>
+                </div>
+                
+                <button onclick="analizarTexto()" class="btn btn-primary btn-lg w-100">Analizar con Red Neuronal</button>
+
+                <div id="resultados" class="mt-4" style="display: none;">
+                    <div class="result-box">
+                        <span class="label-ai">ALGORITMO DETECTADO</span>
+                        <h3 id="algoritmoNombre" class="mb-0 text-info">Cargando...</h3>
+                    </div>
+
+                    <div class="result-box mt-3">
+                        <span class="label-ai">MENSAJE DESCIFRADO</span>
+                        <p id="textoDescifrado" class="lead mb-0 text-white">...</p>
+                    </div>
+                </div>
+                
+                <div id="error" class="alert alert-danger mt-3" style="display: none;"></div>
+            </div>
+            
+            <p class="text-center mt-4 text-secondary small">Proyecto Inteligencia Artificial - Unicatolica 2026</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function analizarTexto() {
+        const texto = document.getElementById('textoInput').value;
+        const resDiv = document.getElementById('resultados');
+        const errDiv = document.getElementById('error');
+
+        if (!texto) {
+            alert("Por favor ingresa algún texto.");
+            return;
+        }
+
+        try {
+            // URL local para pruebas (luego la cambias por la de Vercel)
+            const response = await fetch('http://127.0.0.1:8000/procesar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ texto: texto })
+            });
+
+            if (!response.ok) throw new Error('Error al conectar con el backend');
+
+            const data = await response.json();
+
+            // Mostrar resultados
+            resDiv.style.display = 'block';
+            errDiv.style.display = 'none';
+            document.getElementById('algoritmoNombre').innerText = data.algoritmo;
+            document.getElementById('textoDescifrado').innerText = data.original;
+
+        } catch (error) {
+            errDiv.innerText = "Error: " + error.message;
+            errDiv.style.display = 'block';
+            resDiv.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
