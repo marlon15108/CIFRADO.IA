@@ -1,7 +1,3 @@
-fastapi
-uvicorn
 streamlit
-requests
+scikit-learn
 joblib
-scikit-learn==1.6.1
-numpy
